@@ -1,0 +1,269 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Employee API for Connect.",
+        "title": "Connect Employee API",
+        "contact": {
+            "email": "mrexmelle@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "0.1.0"
+    },
+    "host": "localhost:8081",
+    "basePath": "/",
+    "paths": {
+        "/titlings": {
+            "post": {
+                "description": "Post a new titlings",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Titlings"
+                ],
+                "parameters": [
+                    {
+                        "description": "Titling Request",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_titling.PostRequestDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success Response",
+                        "schema": {
+                            "$ref": "#/definitions/internal_titling.PostResponseDto"
+                        }
+                    },
+                    "400": {
+                        "description": "BadRequest"
+                    },
+                    "500": {
+                        "description": "InternalServerError"
+                    }
+                }
+            }
+        },
+        "/titlings/{id}": {
+            "get": {
+                "description": "Get a titling",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Titlings"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Titling ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success Response",
+                        "schema": {
+                            "$ref": "#/definitions/internal_titling.GetResponseDto"
+                        }
+                    },
+                    "400": {
+                        "description": "BadRequest"
+                    },
+                    "500": {
+                        "description": "InternalServerError"
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a titling",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Titlings"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Titling ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success Response",
+                        "schema": {
+                            "$ref": "#/definitions/internal_titling.DeleteResponseDto"
+                        }
+                    },
+                    "400": {
+                        "description": "BadRequest"
+                    },
+                    "500": {
+                        "description": "InternalServerError"
+                    }
+                }
+            },
+            "patch": {
+                "description": "Patch a titling",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Titlings"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Titling ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Titling Patch Request",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_titling.PatchRequestDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success Response",
+                        "schema": {
+                            "$ref": "#/definitions/internal_titling.PatchResponseDto"
+                        }
+                    },
+                    "400": {
+                        "description": "BadRequest"
+                    },
+                    "500": {
+                        "description": "InternalServerError"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "github_com_mrexmelle_connect-emp_internal_dto.ServiceError": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_titling.DeleteResponseDto": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "$ref": "#/definitions/github_com_mrexmelle_connect-emp_internal_dto.ServiceError"
+                }
+            }
+        },
+        "internal_titling.GetResponseDto": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/internal_titling.ViewEntity"
+                },
+                "error": {
+                    "$ref": "#/definitions/github_com_mrexmelle_connect-emp_internal_dto.ServiceError"
+                }
+            }
+        },
+        "internal_titling.PatchRequestDto": {
+            "type": "object",
+            "properties": {
+                "fields": {
+                    "type": "object",
+                    "additionalProperties": true
+                }
+            }
+        },
+        "internal_titling.PatchResponseDto": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "$ref": "#/definitions/github_com_mrexmelle_connect-emp_internal_dto.ServiceError"
+                }
+            }
+        },
+        "internal_titling.PostRequestDto": {
+            "type": "object",
+            "properties": {
+                "ehid": {
+                    "type": "string"
+                },
+                "end_date": {
+                    "type": "string"
+                },
+                "start_date": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_titling.PostResponseDto": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/internal_titling.ViewEntity"
+                },
+                "error": {
+                    "$ref": "#/definitions/github_com_mrexmelle_connect-emp_internal_dto.ServiceError"
+                }
+            }
+        },
+        "internal_titling.ViewEntity": {
+            "type": "object",
+            "properties": {
+                "ehid": {
+                    "type": "string"
+                },
+                "end_date": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "start_date": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "externalDocs": {
+        "description": "OpenAPI",
+        "url": "https://swagger.io/resources/open-api/"
+    }
+}
