@@ -6,6 +6,8 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
+	"github.com/mrexmelle/connect-emp/internal/config"
+	"github.com/mrexmelle/connect-emp/internal/titling"
 	"github.com/spf13/cobra"
 	httpSwagger "github.com/swaggo/http-swagger"
 	"go.uber.org/dig"
@@ -18,8 +20,17 @@ func EnableCors(w *http.ResponseWriter) {
 func Serve(cmd *cobra.Command, args []string) {
 	container := dig.New()
 
+	container.Provide(config.NewRepository)
+	container.Provide(titling.NewRepository)
+
+	container.Provide(config.NewService)
+	container.Provide(titling.NewService)
+
+	container.Provide(titling.NewController)
+
 	process := func(
 		configService *config.Service,
+		titlingController *titling.Controller,
 	) {
 		r := chi.NewRouter()
 
@@ -39,6 +50,13 @@ func Serve(cmd *cobra.Command, args []string) {
 				}),
 			))
 		}
+
+		r.Route("/titlings", func(r chi.Router) {
+			r.Post("/", titlingController.Post)
+			r.Get("/{id}", titlingController.Get)
+			r.Patch("/{id}", titlingController.Patch)
+			r.Delete("/{id}", titlingController.Delete)
+		})
 
 		err := http.ListenAndServe(fmt.Sprintf(":%d", configService.GetPort()), r)
 
