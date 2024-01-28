@@ -1,0 +1,20 @@
+app:
+  datasource:
+    read:
+      host: postgres
+      port: 5432
+      user: emp_r
+      password: 123
+      dbname: emp
+      sslmode: disable
+      timezone: Asia/Jakarta
+    write:
+      host: postgres
+      port: 5432
+      user: emp_w
+      password: 123
+      dbname: emp
+      sslmode: disable
+      timezone: Asia/Jakarta
+  server:
+    port: 8081
