@@ -7,6 +7,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
 	"github.com/mrexmelle/connect-emp/internal/config"
+	"github.com/mrexmelle/connect-emp/internal/grading"
 	"github.com/mrexmelle/connect-emp/internal/titling"
 	"github.com/spf13/cobra"
 	httpSwagger "github.com/swaggo/http-swagger"
@@ -21,15 +22,19 @@ func Serve(cmd *cobra.Command, args []string) {
 	container := dig.New()
 
 	container.Provide(config.NewRepository)
+	container.Provide(grading.NewRepository)
 	container.Provide(titling.NewRepository)
 
 	container.Provide(config.NewService)
+	container.Provide(grading.NewService)
 	container.Provide(titling.NewService)
 
+	container.Provide(grading.NewController)
 	container.Provide(titling.NewController)
 
 	process := func(
 		configService *config.Service,
+		gradingController *grading.Controller,
 		titlingController *titling.Controller,
 	) {
 		r := chi.NewRouter()
@@ -50,6 +55,13 @@ func Serve(cmd *cobra.Command, args []string) {
 				}),
 			))
 		}
+
+		r.Route("/gradings", func(r chi.Router) {
+			r.Post("/", gradingController.Post)
+			r.Get("/{id}", gradingController.Get)
+			r.Patch("/{id}", gradingController.Patch)
+			r.Delete("/{id}", gradingController.Delete)
+		})
 
 		r.Route("/titlings", func(r chi.Router) {
 			r.Post("/", titlingController.Post)

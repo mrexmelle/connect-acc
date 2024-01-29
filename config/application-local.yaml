@@ -17,4 +17,4 @@ app:
       sslmode: disable
       timezone: Asia/Jakarta
   server:
-    port: 8081
+    port: 8082
