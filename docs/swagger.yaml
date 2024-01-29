@@ -7,6 +7,60 @@ definitions:
       message:
         type: string
     type: object
+  internal_grading.DeleteResponseDto:
+    properties:
+      error:
+        $ref: '#/definitions/github_com_mrexmelle_connect-emp_internal_dto.ServiceError'
+    type: object
+  internal_grading.GetResponseDto:
+    properties:
+      data:
+        $ref: '#/definitions/internal_grading.ViewEntity'
+      error:
+        $ref: '#/definitions/github_com_mrexmelle_connect-emp_internal_dto.ServiceError'
+    type: object
+  internal_grading.PatchRequestDto:
+    properties:
+      fields:
+        additionalProperties: true
+        type: object
+    type: object
+  internal_grading.PatchResponseDto:
+    properties:
+      error:
+        $ref: '#/definitions/github_com_mrexmelle_connect-emp_internal_dto.ServiceError'
+    type: object
+  internal_grading.PostRequestDto:
+    properties:
+      ehid:
+        type: string
+      end_date:
+        type: string
+      grade:
+        type: string
+      start_date:
+        type: string
+    type: object
+  internal_grading.PostResponseDto:
+    properties:
+      data:
+        $ref: '#/definitions/internal_grading.ViewEntity'
+      error:
+        $ref: '#/definitions/github_com_mrexmelle_connect-emp_internal_dto.ServiceError'
+    type: object
+  internal_grading.ViewEntity:
+    properties:
+      ehid:
+        type: string
+      end_date:
+        type: string
+      grade:
+        type: string
+      id:
+        type: integer
+      start_date:
+        type: string
+    type: object
   internal_titling.DeleteResponseDto:
     properties:
       error:
@@ -64,7 +118,7 @@ definitions:
 externalDocs:
   description: OpenAPI
   url: https://swagger.io/resources/open-api/
-host: localhost:8081
+host: localhost:8082
 info:
   contact:
     email: mrexmelle@gmail.com
@@ -75,6 +129,103 @@ info:
   title: Connect Employee API
   version: 0.1.0
 paths:
+  /gradings:
+    post:
+      consumes:
+      - application/json
+      description: Post a new gradings
+      parameters:
+      - description: Grading Request
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/internal_grading.PostRequestDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success Response
+          schema:
+            $ref: '#/definitions/internal_grading.PostResponseDto'
+        "400":
+          description: BadRequest
+        "500":
+          description: InternalServerError
+      tags:
+      - Gradings
+  /gradings/{id}:
+    delete:
+      description: Delete a grading
+      parameters:
+      - description: Grading ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success Response
+          schema:
+            $ref: '#/definitions/internal_grading.DeleteResponseDto'
+        "400":
+          description: BadRequest
+        "500":
+          description: InternalServerError
+      tags:
+      - Gradings
+    get:
+      description: Get a grading
+      parameters:
+      - description: Grading ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success Response
+          schema:
+            $ref: '#/definitions/internal_grading.GetResponseDto'
+        "400":
+          description: BadRequest
+        "500":
+          description: InternalServerError
+      tags:
+      - Gradings
+    patch:
+      consumes:
+      - application/json
+      description: Patch a grading
+      parameters:
+      - description: Grading ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Grading Patch Request
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/internal_grading.PatchRequestDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success Response
+          schema:
+            $ref: '#/definitions/internal_grading.PatchResponseDto'
+        "400":
+          description: BadRequest
+        "500":
+          description: InternalServerError
+      tags:
+      - Gradings
   /titlings:
     post:
       consumes:

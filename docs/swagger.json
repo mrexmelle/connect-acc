@@ -12,9 +12,158 @@
         },
         "version": "0.1.0"
     },
-    "host": "localhost:8081",
+    "host": "localhost:8082",
     "basePath": "/",
     "paths": {
+        "/gradings": {
+            "post": {
+                "description": "Post a new gradings",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Gradings"
+                ],
+                "parameters": [
+                    {
+                        "description": "Grading Request",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_grading.PostRequestDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success Response",
+                        "schema": {
+                            "$ref": "#/definitions/internal_grading.PostResponseDto"
+                        }
+                    },
+                    "400": {
+                        "description": "BadRequest"
+                    },
+                    "500": {
+                        "description": "InternalServerError"
+                    }
+                }
+            }
+        },
+        "/gradings/{id}": {
+            "get": {
+                "description": "Get a grading",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Gradings"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Grading ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success Response",
+                        "schema": {
+                            "$ref": "#/definitions/internal_grading.GetResponseDto"
+                        }
+                    },
+                    "400": {
+                        "description": "BadRequest"
+                    },
+                    "500": {
+                        "description": "InternalServerError"
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a grading",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Gradings"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Grading ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success Response",
+                        "schema": {
+                            "$ref": "#/definitions/internal_grading.DeleteResponseDto"
+                        }
+                    },
+                    "400": {
+                        "description": "BadRequest"
+                    },
+                    "500": {
+                        "description": "InternalServerError"
+                    }
+                }
+            },
+            "patch": {
+                "description": "Patch a grading",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Gradings"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Grading ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Grading Patch Request",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_grading.PatchRequestDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success Response",
+                        "schema": {
+                            "$ref": "#/definitions/internal_grading.PatchResponseDto"
+                        }
+                    },
+                    "400": {
+                        "description": "BadRequest"
+                    },
+                    "500": {
+                        "description": "InternalServerError"
+                    }
+                }
+            }
+        },
         "/titlings": {
             "post": {
                 "description": "Post a new titlings",
@@ -173,6 +322,90 @@
                     "type": "string"
                 },
                 "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_grading.DeleteResponseDto": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "$ref": "#/definitions/github_com_mrexmelle_connect-emp_internal_dto.ServiceError"
+                }
+            }
+        },
+        "internal_grading.GetResponseDto": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/internal_grading.ViewEntity"
+                },
+                "error": {
+                    "$ref": "#/definitions/github_com_mrexmelle_connect-emp_internal_dto.ServiceError"
+                }
+            }
+        },
+        "internal_grading.PatchRequestDto": {
+            "type": "object",
+            "properties": {
+                "fields": {
+                    "type": "object",
+                    "additionalProperties": true
+                }
+            }
+        },
+        "internal_grading.PatchResponseDto": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "$ref": "#/definitions/github_com_mrexmelle_connect-emp_internal_dto.ServiceError"
+                }
+            }
+        },
+        "internal_grading.PostRequestDto": {
+            "type": "object",
+            "properties": {
+                "ehid": {
+                    "type": "string"
+                },
+                "end_date": {
+                    "type": "string"
+                },
+                "grade": {
+                    "type": "string"
+                },
+                "start_date": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_grading.PostResponseDto": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/internal_grading.ViewEntity"
+                },
+                "error": {
+                    "$ref": "#/definitions/github_com_mrexmelle_connect-emp_internal_dto.ServiceError"
+                }
+            }
+        },
+        "internal_grading.ViewEntity": {
+            "type": "object",
+            "properties": {
+                "ehid": {
+                    "type": "string"
+                },
+                "end_date": {
+                    "type": "string"
+                },
+                "grade": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "start_date": {
                     "type": "string"
                 }
             }
