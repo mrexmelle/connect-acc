@@ -11,13 +11,17 @@ type Repository interface {
 	GetReadDsn() string
 	GetWriteDsn() string
 	GetPort() int
+	GetAuthxHost() string
+	GetAuthxPort() int
 }
 
 type RepositoryImpl struct {
-	Profile  string
-	ReadDsn  string
-	WriteDsn string
-	Port     int
+	Profile   string
+	ReadDsn   string
+	WriteDsn  string
+	Port      int
+	AuthxHost string
+	AuthxPort int
 }
 
 func NewRepository() Repository {
@@ -50,11 +54,16 @@ func NewRepository() Repository {
 
 	port := viper.GetInt("app.server.port")
 
+	authxHost := viper.GetString("app.client.authx.host")
+	authxPort := viper.GetInt("app.client.authx.port")
+
 	return &RepositoryImpl{
-		Profile:  profile,
-		ReadDsn:  readDsn,
-		WriteDsn: writeDsn,
-		Port:     port,
+		Profile:   profile,
+		ReadDsn:   readDsn,
+		WriteDsn:  writeDsn,
+		Port:      port,
+		AuthxHost: authxHost,
+		AuthxPort: authxPort,
 	}
 }
 
@@ -72,4 +81,12 @@ func (r *RepositoryImpl) GetWriteDsn() string {
 
 func (r *RepositoryImpl) GetPort() int {
 	return r.Port
+}
+
+func (r *RepositoryImpl) GetAuthxHost() string {
+	return r.AuthxHost
+}
+
+func (r *RepositoryImpl) GetAuthxPort() int {
+	return r.AuthxPort
 }

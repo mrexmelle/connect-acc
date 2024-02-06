@@ -61,6 +61,13 @@ definitions:
       start_date:
         type: string
     type: object
+  internal_profile.GetResponseDto:
+    properties:
+      data:
+        $ref: '#/definitions/libauthxc.ProfileEntity'
+      error:
+        $ref: '#/definitions/github_com_mrexmelle_connect-emp_internal_dto.ServiceError'
+    type: object
   internal_titling.DeleteResponseDto:
     properties:
       error:
@@ -113,6 +120,19 @@ definitions:
       start_date:
         type: string
       title:
+        type: string
+    type: object
+  libauthxc.ProfileEntity:
+    properties:
+      dob:
+        type: string
+      ehid:
+        type: string
+      email_address:
+        type: string
+      employee_id:
+        type: string
+      name:
         type: string
     type: object
 externalDocs:
@@ -226,6 +246,28 @@ paths:
           description: InternalServerError
       tags:
       - Gradings
+  /profiles/{ehid}:
+    get:
+      description: Get a profile
+      parameters:
+      - description: EHID
+        in: path
+        name: ehid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success Response
+          schema:
+            $ref: '#/definitions/internal_profile.GetResponseDto'
+        "400":
+          description: BadRequest
+        "500":
+          description: InternalServerError
+      tags:
+      - Profiles
   /titlings:
     post:
       consumes:
