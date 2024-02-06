@@ -8,6 +8,8 @@ import (
 	"github.com/go-chi/cors"
 	"github.com/mrexmelle/connect-emp/internal/config"
 	"github.com/mrexmelle/connect-emp/internal/grading"
+	"github.com/mrexmelle/connect-emp/internal/localerror"
+	"github.com/mrexmelle/connect-emp/internal/profile"
 	"github.com/mrexmelle/connect-emp/internal/titling"
 	"github.com/spf13/cobra"
 	httpSwagger "github.com/swaggo/http-swagger"
@@ -27,14 +29,17 @@ func Serve(cmd *cobra.Command, args []string) {
 
 	container.Provide(config.NewService)
 	container.Provide(grading.NewService)
+	container.Provide(localerror.NewService)
 	container.Provide(titling.NewService)
 
 	container.Provide(grading.NewController)
+	container.Provide(profile.NewController)
 	container.Provide(titling.NewController)
 
 	process := func(
 		configService *config.Service,
 		gradingController *grading.Controller,
+		profileController *profile.Controller,
 		titlingController *titling.Controller,
 	) {
 		r := chi.NewRouter()
@@ -68,6 +73,10 @@ func Serve(cmd *cobra.Command, args []string) {
 			r.Get("/{id}", titlingController.Get)
 			r.Patch("/{id}", titlingController.Patch)
 			r.Delete("/{id}", titlingController.Delete)
+		})
+
+		r.Route("/profiles", func(r chi.Router) {
+			r.Get("/{ehid}", profileController.Get)
 		})
 
 		err := http.ListenAndServe(fmt.Sprintf(":%d", configService.GetPort()), r)

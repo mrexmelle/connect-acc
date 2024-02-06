@@ -170,6 +170,40 @@ const docTemplate = `{
                 }
             }
         },
+        "/profiles/{ehid}": {
+            "get": {
+                "description": "Get a profile",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Profiles"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "EHID",
+                        "name": "ehid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success Response",
+                        "schema": {
+                            "$ref": "#/definitions/internal_profile.GetResponseDto"
+                        }
+                    },
+                    "400": {
+                        "description": "BadRequest"
+                    },
+                    "500": {
+                        "description": "InternalServerError"
+                    }
+                }
+            }
+        },
         "/titlings": {
             "post": {
                 "description": "Post a new titlings",
@@ -416,6 +450,17 @@ const docTemplate = `{
                 }
             }
         },
+        "internal_profile.GetResponseDto": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/libauthxc.ProfileEntity"
+                },
+                "error": {
+                    "$ref": "#/definitions/github_com_mrexmelle_connect-emp_internal_dto.ServiceError"
+                }
+            }
+        },
         "internal_titling.DeleteResponseDto": {
             "type": "object",
             "properties": {
@@ -496,6 +541,26 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "libauthxc.ProfileEntity": {
+            "type": "object",
+            "properties": {
+                "dob": {
+                    "type": "string"
+                },
+                "ehid": {
+                    "type": "string"
+                },
+                "email_address": {
+                    "type": "string"
+                },
+                "employee_id": {
+                    "type": "string"
+                },
+                "name": {
                     "type": "string"
                 }
             }

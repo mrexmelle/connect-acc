@@ -26,8 +26,8 @@ type RepositoryImpl struct {
 func NewRepository(cfg *config.Service) Repository {
 	return &RepositoryImpl{
 		ConfigService: cfg,
-		TableName:     "grades",
-		Query:         NewQuery(cfg.ReadDb, "grades"),
+		TableName:     "gradings",
+		Query:         NewQuery(cfg.ReadDb, "gradings"),
 	}
 }
 
