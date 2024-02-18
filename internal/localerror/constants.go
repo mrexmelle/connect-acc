@@ -9,13 +9,16 @@ import (
 )
 
 var (
-	ErrAuthentication = errors.New("authentication_error")
-	ErrBadJson        = errors.New("bad_json")
-	ErrBadHierarchy   = errors.New("bad_hierarchy")
-	ErrAlreadyMax     = errors.New("already_max")
-	ErrIdNotInteger   = errors.New("id_not_integer")
-	ErrBadQueryParam  = errors.New("bad_query_param")
-	ErrHttpClient     = errors.New("http_client_error")
+	ErrAuthentication  = errors.New("authentication_error")
+	ErrBadJson         = errors.New("bad_json")
+	ErrBadHierarchy    = errors.New("bad_hierarchy")
+	ErrAlreadyMax      = errors.New("already_max")
+	ErrIdNotInteger    = errors.New("id_not_integer")
+	ErrBadQueryParam   = errors.New("bad_query_param")
+	ErrHttpClient      = errors.New("http_client_error")
+	ErrConcurrentEvent = errors.New("concurrent_event")
+	ErrBadDateSequence = errors.New("bad_date_sequence")
+	ErrBadDateString   = errors.New("bad_date_string")
 )
 
 const (
@@ -33,11 +36,14 @@ var ErrorMap = map[error]CodePair{
 	gorm.ErrRecordNotFound:     NewCodePair(http.StatusNotFound, ErrSvcCodeRecordNotFound),
 	sql.ErrNoRows:              NewCodePair(http.StatusNotFound, ErrSvcCodeRecordNotFound),
 
-	ErrAuthentication: NewCodePair(http.StatusUnauthorized, ErrAuthentication.Error()),
-	ErrBadJson:        NewCodePair(http.StatusBadRequest, ErrBadJson.Error()),
-	ErrBadHierarchy:   NewCodePair(http.StatusBadRequest, ErrBadHierarchy.Error()),
-	ErrAlreadyMax:     NewCodePair(http.StatusForbidden, ErrAlreadyMax.Error()),
-	ErrIdNotInteger:   NewCodePair(http.StatusBadRequest, ErrIdNotInteger.Error()),
-	ErrBadQueryParam:  NewCodePair(http.StatusBadRequest, ErrBadQueryParam.Error()),
-	ErrHttpClient:     NewCodePair(http.StatusInternalServerError, ErrHttpClient.Error()),
+	ErrAuthentication:  NewCodePair(http.StatusUnauthorized, ErrAuthentication.Error()),
+	ErrBadJson:         NewCodePair(http.StatusBadRequest, ErrBadJson.Error()),
+	ErrBadHierarchy:    NewCodePair(http.StatusBadRequest, ErrBadHierarchy.Error()),
+	ErrAlreadyMax:      NewCodePair(http.StatusForbidden, ErrAlreadyMax.Error()),
+	ErrIdNotInteger:    NewCodePair(http.StatusBadRequest, ErrIdNotInteger.Error()),
+	ErrBadQueryParam:   NewCodePair(http.StatusBadRequest, ErrBadQueryParam.Error()),
+	ErrHttpClient:      NewCodePair(http.StatusInternalServerError, ErrHttpClient.Error()),
+	ErrConcurrentEvent: NewCodePair(http.StatusBadRequest, ErrConcurrentEvent.Error()),
+	ErrBadDateSequence: NewCodePair(http.StatusBadRequest, ErrBadDateSequence.Error()),
+	ErrBadDateString:   NewCodePair(http.StatusBadRequest, ErrBadDateString.Error()),
 }

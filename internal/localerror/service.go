@@ -30,6 +30,6 @@ func (s *Service) Map(err error) StatusInfo {
 	return NewStatusInfo(
 		http.StatusInternalServerError,
 		ErrSvcCodeUnregistered,
-		"",
+		err.Error(),
 	)
 }
