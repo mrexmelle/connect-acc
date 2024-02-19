@@ -2,8 +2,6 @@ basePath: /
 definitions:
   github_com_mrexmelle_connect-emp_internal_career.Aggregate:
     properties:
-      ehid:
-        type: string
       end_date:
         type: string
       grade:
@@ -32,7 +30,7 @@ definitions:
   internal_account.GetProfileResponseDto:
     properties:
       data:
-        $ref: '#/definitions/libauthxc.ProfileEntity'
+        $ref: '#/definitions/github_com_mrexmelle_connect-emp_internal_career.Aggregate'
       error:
         $ref: '#/definitions/github_com_mrexmelle_connect-emp_internal_dto.ServiceError'
     type: object
@@ -142,19 +140,6 @@ definitions:
       start_date:
         type: string
       title:
-        type: string
-    type: object
-  libauthxc.ProfileEntity:
-    properties:
-      dob:
-        type: string
-      ehid:
-        type: string
-      email_address:
-        type: string
-      employee_id:
-        type: string
-      name:
         type: string
     type: object
 externalDocs:
