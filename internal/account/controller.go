@@ -8,7 +8,6 @@ import (
 	"github.com/mrexmelle/connect-emp/internal/config"
 	"github.com/mrexmelle/connect-emp/internal/dto/dtorespwithdata"
 	"github.com/mrexmelle/connect-emp/internal/localerror"
-	"github.com/mrexmelle/connect-emp/internal/profile"
 )
 
 type Controller struct {
@@ -46,7 +45,7 @@ func (c *Controller) GetCareer(w http.ResponseWriter, r *http.Request) {
 
 	data, err := c.CareerService.RetrieveByEhidOrderByStartDateDesc(ehid)
 	info := c.LocalErrorService.Map(err)
-	dtorespwithdata.New[[]career.Aggregate](
+	dtorespwithdata.New(
 		&data,
 		info.ServiceErrorCode,
 		info.ServiceErrorMessage,
@@ -66,7 +65,7 @@ func (c *Controller) GetProfile(w http.ResponseWriter, r *http.Request) {
 	ehid := chi.URLParam(r, "ehid")
 	data, err := c.AccountService.RetrieveProfile(ehid)
 	info := c.LocalErrorService.Map(err)
-	dtorespwithdata.New[profile.Aggregate](
+	dtorespwithdata.New(
 		data,
 		info.ServiceErrorCode,
 		info.ServiceErrorMessage,

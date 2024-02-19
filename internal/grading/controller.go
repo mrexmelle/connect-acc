@@ -46,7 +46,7 @@ func (c *Controller) Get(w http.ResponseWriter, r *http.Request) {
 	}
 	data, err := c.GradingService.RetrieveById(id)
 	info := c.LocalErrorService.Map(err)
-	dtorespwithdata.New[ViewEntity](
+	dtorespwithdata.New(
 		data,
 		info.ServiceErrorCode,
 		info.ServiceErrorMessage,
@@ -76,7 +76,7 @@ func (c *Controller) Post(w http.ResponseWriter, r *http.Request) {
 
 	data, err := c.GradingService.Create(requestBody)
 	info := c.LocalErrorService.Map(err)
-	dtorespwithdata.New[ViewEntity](
+	dtorespwithdata.New(
 		data,
 		info.ServiceErrorCode,
 		info.ServiceErrorMessage,
