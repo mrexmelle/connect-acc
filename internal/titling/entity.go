@@ -35,7 +35,7 @@ func toViewEntity(e *Entity) *ViewEntity {
 	}
 }
 
-func toViewEntitySlice(s []Entity) []ViewEntity {
+func toViewEntities(s []Entity) []ViewEntity {
 	viewEntities := []ViewEntity{}
 	for _, e := range s {
 		viewEntities = append(viewEntities, *toViewEntity(&e))
