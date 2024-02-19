@@ -392,9 +392,6 @@ const docTemplate = `{
         "github_com_mrexmelle_connect-emp_internal_career.Aggregate": {
             "type": "object",
             "properties": {
-                "ehid": {
-                    "type": "string"
-                },
                 "end_date": {
                     "type": "string"
                 },
@@ -438,7 +435,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/libauthxc.ProfileEntity"
+                    "$ref": "#/definitions/github_com_mrexmelle_connect-emp_internal_career.Aggregate"
                 },
                 "error": {
                     "$ref": "#/definitions/github_com_mrexmelle_connect-emp_internal_dto.ServiceError"
@@ -609,26 +606,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "title": {
-                    "type": "string"
-                }
-            }
-        },
-        "libauthxc.ProfileEntity": {
-            "type": "object",
-            "properties": {
-                "dob": {
-                    "type": "string"
-                },
-                "ehid": {
-                    "type": "string"
-                },
-                "email_address": {
-                    "type": "string"
-                },
-                "employee_id": {
-                    "type": "string"
-                },
-                "name": {
                     "type": "string"
                 }
             }

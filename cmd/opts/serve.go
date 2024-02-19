@@ -7,6 +7,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
 	"github.com/mrexmelle/connect-emp/internal/account"
+	"github.com/mrexmelle/connect-emp/internal/career"
 	"github.com/mrexmelle/connect-emp/internal/config"
 	"github.com/mrexmelle/connect-emp/internal/grading"
 	"github.com/mrexmelle/connect-emp/internal/localerror"
@@ -28,6 +29,7 @@ func Serve(cmd *cobra.Command, args []string) {
 	container.Provide(titling.NewRepository)
 
 	container.Provide(account.NewService)
+	container.Provide(career.NewService)
 	container.Provide(config.NewService)
 	container.Provide(grading.NewService)
 	container.Provide(localerror.NewService)

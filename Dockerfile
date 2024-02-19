@@ -11,7 +11,7 @@ RUN swag init -g ./cmd/main.go
 RUN go build -o ./connect-emp ./cmd/main.go
 RUN rm -rf ./cmd ./internal go
 
-EXPOSE 8080
-CMD ["/app/connect-acc", "serve"]
+EXPOSE 8082
+CMD ["/app/connect-emp", "serve"]
 
 LABEL org.opencontainers.image.source https://github.com/mrexmelle/connect-emp
