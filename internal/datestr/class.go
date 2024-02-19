@@ -72,14 +72,6 @@ func (c *Class) IsIndeterminate() bool {
 	return (c.date == Indeterminate)
 }
 
-func (c *Class) IsValidStartDate() bool {
-	return !c.IsIndeterminate()
-}
-
-func (c *Class) IsValidEndDate() bool {
-	return true
-}
-
 func (c *Class) Equals(other *Class) bool {
 	return (c.IsIndeterminate() && other.IsIndeterminate()) ||
 		(c.date == other.date)

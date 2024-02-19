@@ -1,8 +1,6 @@
 package dateinterval
 
 import (
-	"fmt"
-
 	"github.com/mrexmelle/connect-emp/internal/datestr"
 	"github.com/mrexmelle/connect-emp/internal/localerror"
 )
@@ -24,7 +22,6 @@ func NewFromStrings(startDate string, endDate string) (*Class, error) {
 	}
 
 	if sd.IsAfter(ed) {
-		fmt.Println("sd is after ed")
 		return nil, localerror.ErrBadDateSequence
 	}
 
