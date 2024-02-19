@@ -40,7 +40,6 @@ type Query interface {
 	SelectById(fields []string, id int) *gorm.DB
 	SelectByEhid(fields []string, ehid string) *gorm.DB
 	SelectByEhidOrderByStartDate(fields []string, ehid string, orderDir string) *gorm.DB
-	SelectActiveByNodeId(fields []string, nodeId string) *gorm.DB
 	SelectActiveByEhid(fields []string, ehid string) *gorm.DB
 	ByEhidAndIntersectingDates(ehid string, startDate string, endDate string) *gorm.DB
 	ByEhidAndEndDateIsNull(ehid string) *gorm.DB
@@ -81,13 +80,6 @@ func (q *QueryImpl) SelectByEhidOrderByStartDate(fields []string, ehid string, o
 		return q.SelectByEhid(fields, ehid).
 			Order("start_date " + orderDir)
 	}
-}
-
-func (q *QueryImpl) SelectActiveByNodeId(fields []string, nodeId string) *gorm.DB {
-	return q.performSelect(fields).
-		Where("node_id = ?", nodeId).
-		Where("start_date < NOW()").
-		Where("end_date IS NULL OR end_date > NOW()")
 }
 
 func (q *QueryImpl) SelectActiveByEhid(fields []string, ehid string) *gorm.DB {

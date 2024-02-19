@@ -40,7 +40,6 @@ type Query interface {
 	SelectById(fields []string, id int) *gorm.DB
 	SelectByEhid(fields []string, ehid string) *gorm.DB
 	SelectByEhidOrderByStartDate(fields []string, ehid string, orderDir string) *gorm.DB
-	SelectActiveByNodeId(fields []string, nodeId string) *gorm.DB
 	SelectActiveByEhid(fields []string, ehid string) *gorm.DB
 	ByEhidAndIntersectingDates(ehid string, startDate string, endDate string) *gorm.DB
 	ByEhidAndEndDateIsNull(ehid string) *gorm.DB

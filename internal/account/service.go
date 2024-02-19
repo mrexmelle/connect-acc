@@ -1,123 +1,57 @@
 package account
 
 import (
-	"fmt"
-	"slices"
-	"sort"
-
+	"github.com/mrexmelle/connect-authx/pkg/libauthxc"
 	"github.com/mrexmelle/connect-emp/internal/career"
 	"github.com/mrexmelle/connect-emp/internal/config"
-	"github.com/mrexmelle/connect-emp/internal/dateinterval"
-	"github.com/mrexmelle/connect-emp/internal/datesort"
-	"github.com/mrexmelle/connect-emp/internal/datestr"
-	"github.com/mrexmelle/connect-emp/internal/grading"
-	"github.com/mrexmelle/connect-emp/internal/titling"
+	"github.com/mrexmelle/connect-emp/internal/localerror"
+	"github.com/mrexmelle/connect-emp/internal/profile"
 )
 
 type Service struct {
-	ConfigService  *config.Service
-	GradingService *grading.Service
-	TitlingService *titling.Service
+	ConfigService *config.Service
+	CareerService *career.Service
+	AuthxClient   *libauthxc.Client
 }
 
 func NewService(
 	cfg *config.Service,
-	gs *grading.Service,
-	ts *titling.Service,
+	cs *career.Service,
 ) *Service {
 	return &Service{
-		ConfigService:  cfg,
-		GradingService: gs,
-		TitlingService: ts,
+		ConfigService: cfg,
+		CareerService: cs,
+		AuthxClient: libauthxc.NewClient(
+			cfg.ConfigRepository.GetAuthxHost(),
+			cfg.ConfigRepository.GetAuthxPort(),
+		),
 	}
 }
 
-func (s *Service) RetrieveByEhidOrderByStartDateDesc(ehid string) ([]career.Aggregate, error) {
-	aggs := []career.Aggregate{}
+func (s *Service) RetrieveCareer(ehid string) ([]career.Aggregate, error) {
+	return s.CareerService.RetrieveByEhidOrderByStartDateDesc(ehid)
+}
 
-	gradings, err := s.GradingService.RetrieveByEhidOrderByStartDate(ehid, grading.OrderDesc)
+func (s *Service) RetrieveProfile(ehid string) (*profile.Aggregate, error) {
+	p, err := s.AuthxClient.GetProfileByEhid(ehid)
+	if err != nil || p.Error.Code != localerror.ErrSvcCodeNone {
+		return nil, err
+	}
+
+	agg := &profile.Aggregate{
+		Ehid:         ehid,
+		EmployeeId:   p.Data.EmployeeId,
+		Name:         p.Data.Name,
+		EmailAddress: p.Data.EmailAddress,
+		Dob:          p.Data.Dob,
+	}
+
+	career, err := s.CareerService.RetrieveCurrentByEhid(ehid)
 	if err != nil {
-		fmt.Printf("error di grading.RetrieveByEhidOrderByStartDate")
-		return []career.Aggregate{}, err
+		return nil, err
 	}
-	titlings, err := s.TitlingService.RetrieveByEhidOrderByStartDate(ehid, titling.OrderDesc)
-	if err != nil {
-		fmt.Printf("error di titling.RetrieveByEhidOrderByStartDate")
-		return []career.Aggregate{}, err
-	}
+	agg.Grade = career.Grade
+	agg.Title = career.Title
 
-	endDates := []string{}
-	earliestStartDate := ""
-	for i, g := range gradings {
-		idx := slices.Index(endDates, g.EndDate)
-		if idx == -1 {
-			endDates = append(endDates, g.EndDate)
-		}
-
-		if i == 0 {
-			earliestStartDate = g.StartDate
-		} else {
-			if g.StartDate < earliestStartDate {
-				earliestStartDate = g.StartDate
-			}
-		}
-	}
-	for _, t := range titlings {
-		idx := slices.Index(endDates, t.EndDate)
-		if idx == -1 {
-			endDates = append(endDates, t.EndDate)
-		}
-
-		if t.StartDate < earliestStartDate {
-			earliestStartDate = t.StartDate
-		}
-	}
-
-	sort.Sort(sort.Reverse(datesort.DateStringSlice(endDates)))
-	for i := 0; i < len(endDates); i++ {
-		var startDate = ""
-		if i == len(endDates)-1 {
-			startDate = earliestStartDate
-		} else {
-			ds, err := datestr.NewFromString(endDates[i+1])
-			if err != nil {
-				return []career.Aggregate{}, err
-			}
-			startDate = ds.OffsetAndClone(+1).AsString()
-		}
-		aggs = append(aggs, career.Aggregate{
-			Ehid:      ehid,
-			StartDate: startDate,
-			EndDate:   endDates[i],
-		})
-	}
-
-	for i, a := range aggs {
-		aggsInterval, err := dateinterval.NewFromStrings(a.StartDate, a.EndDate)
-		if err != nil {
-			return []career.Aggregate{}, err
-		}
-		for _, g := range gradings {
-			gradeInterval, err := dateinterval.NewFromStrings(g.StartDate, g.EndDate)
-			if err != nil {
-				return []career.Aggregate{}, err
-			}
-			if gradeInterval.IsEncompassingInterval(aggsInterval) {
-				aggs[i].Grade = g.Grade
-				break
-			}
-		}
-		for _, t := range titlings {
-			titleInterval, err := dateinterval.NewFromStrings(t.StartDate, t.EndDate)
-			if err != nil {
-				return []career.Aggregate{}, err
-			}
-			if titleInterval.IsEncompassingInterval(aggsInterval) {
-				aggs[i].Title = t.Title
-				break
-			}
-		}
-	}
-
-	return aggs, nil
+	return agg, nil
 }
