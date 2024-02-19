@@ -21,6 +21,74 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/accounts/{ehid}/career": {
+            "get": {
+                "description": "Get a career",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Accounts"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "EHID",
+                        "name": "ehid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success Response",
+                        "schema": {
+                            "$ref": "#/definitions/internal_account.GetCareerResponseDto"
+                        }
+                    },
+                    "400": {
+                        "description": "BadRequest"
+                    },
+                    "500": {
+                        "description": "InternalServerError"
+                    }
+                }
+            }
+        },
+        "/accounts/{ehid}/profile": {
+            "get": {
+                "description": "Get a profile",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Accounts"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "EHID",
+                        "name": "ehid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success Response",
+                        "schema": {
+                            "$ref": "#/definitions/internal_account.GetProfileResponseDto"
+                        }
+                    },
+                    "400": {
+                        "description": "BadRequest"
+                    },
+                    "500": {
+                        "description": "InternalServerError"
+                    }
+                }
+            }
+        },
         "/gradings": {
             "post": {
                 "description": "Post a new gradings",
@@ -159,40 +227,6 @@ const docTemplate = `{
                         "description": "Success Response",
                         "schema": {
                             "$ref": "#/definitions/internal_grading.PatchResponseDto"
-                        }
-                    },
-                    "400": {
-                        "description": "BadRequest"
-                    },
-                    "500": {
-                        "description": "InternalServerError"
-                    }
-                }
-            }
-        },
-        "/profiles/{ehid}": {
-            "get": {
-                "description": "Get a profile",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Profiles"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "EHID",
-                        "name": "ehid",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Success Response",
-                        "schema": {
-                            "$ref": "#/definitions/internal_profile.GetResponseDto"
                         }
                     },
                     "400": {
@@ -355,6 +389,26 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "github_com_mrexmelle_connect-emp_internal_career.Aggregate": {
+            "type": "object",
+            "properties": {
+                "ehid": {
+                    "type": "string"
+                },
+                "end_date": {
+                    "type": "string"
+                },
+                "grade": {
+                    "type": "string"
+                },
+                "start_date": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
         "github_com_mrexmelle_connect-emp_internal_dto.ServiceError": {
             "type": "object",
             "properties": {
@@ -363,6 +417,31 @@ const docTemplate = `{
                 },
                 "message": {
                     "type": "string"
+                }
+            }
+        },
+        "internal_account.GetCareerResponseDto": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_mrexmelle_connect-emp_internal_career.Aggregate"
+                    }
+                },
+                "error": {
+                    "$ref": "#/definitions/github_com_mrexmelle_connect-emp_internal_dto.ServiceError"
+                }
+            }
+        },
+        "internal_account.GetProfileResponseDto": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/libauthxc.ProfileEntity"
+                },
+                "error": {
+                    "$ref": "#/definitions/github_com_mrexmelle_connect-emp_internal_dto.ServiceError"
                 }
             }
         },
@@ -447,17 +526,6 @@ const docTemplate = `{
                 },
                 "start_date": {
                     "type": "string"
-                }
-            }
-        },
-        "internal_profile.GetResponseDto": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/libauthxc.ProfileEntity"
-                },
-                "error": {
-                    "$ref": "#/definitions/github_com_mrexmelle_connect-emp_internal_dto.ServiceError"
                 }
             }
         },
