@@ -10,24 +10,24 @@ var (
 		"ehid",
 		"start_date",
 		"end_date",
-		"title",
+		"grade",
 	}
 
 	FieldsAllExceptId = []string{
 		"ehid",
 		"start_date",
 		"end_date",
-		"title",
+		"grade",
 	}
 
 	FieldsAllExceptIdAndEndDate = []string{
 		"ehid",
 		"start_date",
-		"title",
+		"grade",
 	}
 
 	FieldsPatchable = []string{
-		"title",
+		"grade",
 		"end_date",
 	}
 
@@ -42,6 +42,8 @@ type Query interface {
 	SelectByEhidOrderByStartDate(fields []string, ehid string, orderDir string) *gorm.DB
 	SelectActiveByNodeId(fields []string, nodeId string) *gorm.DB
 	SelectActiveByEhid(fields []string, ehid string) *gorm.DB
+	ByEhidAndIntersectingDates(ehid string, startDate string, endDate string) *gorm.DB
+	ByEhidAndEndDateIsNull(ehid string) *gorm.DB
 }
 
 type QueryImpl struct {
@@ -93,4 +95,27 @@ func (q *QueryImpl) SelectActiveByEhid(fields []string, ehid string) *gorm.DB {
 		Where("ehid = ?", ehid).
 		Where("start_date < NOW()").
 		Where("end_date IS NULL OR end_date > NOW()")
+}
+
+func (q *QueryImpl) ByEhidAndIntersectingDates(ehid string, startDate string, endDate string) *gorm.DB {
+	return q.Db.
+		Table(q.TableName).
+		Where("ehid = ?", ehid).
+		Where(
+			q.Db.
+				Where("start_date <= ?", startDate).
+				Where("end_date >= ?", startDate),
+		).
+		Or(
+			q.Db.
+				Where("start_date <= ?", endDate).
+				Where("end_date >= ?", endDate),
+		)
+}
+
+func (q *QueryImpl) ByEhidAndEndDateIsNull(ehid string) *gorm.DB {
+	return q.Db.
+		Table(q.TableName).
+		Where("ehid = ?", ehid).
+		Where("end_date IS NULL")
 }
