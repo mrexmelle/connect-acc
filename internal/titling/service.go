@@ -34,7 +34,32 @@ func (s *Service) Create(req PostRequestDto) (*ViewEntity, error) {
 		ed.Valid = false
 	} else {
 		ed.Time, err = time.Parse("2006-01-02", req.EndDate)
+		if err != nil && req.EndDate != "" {
+			return nil, localerror.ErrBadDateString
+		}
 		ed.Valid = (err == nil)
+	}
+
+	if ed.Valid && (ed.Time.Before(sd) || ed.Time.Equal(sd)) {
+		return nil, localerror.ErrBadDateSequence
+	}
+
+	if req.EndDate == "" {
+		cnt, err := s.TitlingRepository.CountEndDateIsNull(req.Ehid)
+		if err != nil {
+			return nil, err
+		}
+		if cnt > 0 {
+			return nil, localerror.ErrConcurrentEvent
+		}
+	} else {
+		cnt, err := s.TitlingRepository.CountIntersectingDates(req.Ehid, req.StartDate, req.EndDate)
+		if err != nil {
+			return nil, err
+		}
+		if cnt > 0 {
+			return nil, localerror.ErrConcurrentEvent
+		}
 	}
 
 	result, err := s.TitlingRepository.Create(&Entity{
@@ -74,7 +99,7 @@ func (s *Service) RetrieveByEhidOrderByStartDate(ehid string, orderDir string) (
 	if err != nil {
 		return []ViewEntity{}, err
 	}
-	return toViewEntitySlice(result), nil
+	return toViewEntities(result), nil
 }
 
 func (s *Service) RetrieveCurrentByNodeId(nodeId string) ([]ViewEntity, error) {
@@ -82,7 +107,7 @@ func (s *Service) RetrieveCurrentByNodeId(nodeId string) ([]ViewEntity, error) {
 	if err != nil {
 		return []ViewEntity{}, err
 	}
-	return toViewEntitySlice(result), nil
+	return toViewEntities(result), nil
 }
 
 func (s *Service) RetrieveCurrentByEhid(ehid string) ([]ViewEntity, error) {
@@ -90,5 +115,5 @@ func (s *Service) RetrieveCurrentByEhid(ehid string) ([]ViewEntity, error) {
 	if err != nil {
 		return []ViewEntity{}, err
 	}
-	return toViewEntitySlice(result), nil
+	return toViewEntities(result), nil
 }

@@ -15,6 +15,8 @@ type Repository interface {
 	FindByEhidOrderByStartDate(ehid string, orderDir string) ([]Entity, error)
 	FindCurrentByNodeId(nodeId string) ([]Entity, error)
 	FindCurrentByEhid(ehid string) ([]Entity, error)
+	CountIntersectingDates(ehid string, startDate string, endDate string) (int64, error)
+	CountEndDateIsNull(endDate string) (int64, error)
 }
 
 type RepositoryImpl struct {
@@ -137,4 +139,34 @@ func (r *RepositoryImpl) DeleteById(id int) error {
 		return result.Error
 	}
 	return nil
+}
+
+func (r *RepositoryImpl) CountIntersectingDates(
+	ehid string,
+	startDate string,
+	endDate string,
+) (int64, error) {
+	var countResult int64
+	result := r.Query.
+		ByEhidAndIntersectingDates(ehid, startDate, endDate).
+		Count(&countResult)
+
+	if result.Error != nil {
+		return 0, result.Error
+	}
+
+	return countResult, nil
+}
+
+func (r *RepositoryImpl) CountEndDateIsNull(ehid string) (int64, error) {
+	var countResult int64
+	result := r.Query.
+		ByEhidAndEndDateIsNull(ehid).
+		Count(&countResult)
+
+	if result.Error != nil {
+		return 0, result.Error
+	}
+
+	return countResult, nil
 }
