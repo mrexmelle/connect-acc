@@ -102,18 +102,10 @@ func (s *Service) RetrieveByEhidOrderByStartDate(ehid string, orderDir string) (
 	return toViewEntities(result), nil
 }
 
-func (s *Service) RetrieveCurrentByNodeId(nodeId string) ([]ViewEntity, error) {
-	result, err := s.TitlingRepository.FindCurrentByNodeId(nodeId)
-	if err != nil {
-		return []ViewEntity{}, err
-	}
-	return toViewEntities(result), nil
-}
-
-func (s *Service) RetrieveCurrentByEhid(ehid string) ([]ViewEntity, error) {
+func (s *Service) RetrieveCurrentByEhid(ehid string) (*ViewEntity, error) {
 	result, err := s.TitlingRepository.FindCurrentByEhid(ehid)
 	if err != nil {
-		return []ViewEntity{}, err
+		return nil, err
 	}
-	return toViewEntities(result), nil
+	return toViewEntity(result), nil
 }

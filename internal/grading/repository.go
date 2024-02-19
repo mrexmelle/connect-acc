@@ -13,8 +13,7 @@ type Repository interface {
 	UpdateById(fields map[string]interface{}, id int) error
 	DeleteById(id int) error
 	FindByEhidOrderByStartDate(ehid string, orderDir string) ([]Entity, error)
-	FindCurrentByNodeId(nodeId string) ([]Entity, error)
-	FindCurrentByEhid(ehid string) ([]Entity, error)
+	FindCurrentByEhid(ehid string) (*Entity, error)
 	CountIntersectingDates(ehid string, startDate string, endDate string) (int64, error)
 	CountEndDateIsNull(ehid string) (int64, error)
 }
@@ -83,22 +82,15 @@ func (r *RepositoryImpl) FindByEhidOrderByStartDate(ehid string, orderDir string
 	return response, nil
 }
 
-func (r *RepositoryImpl) FindCurrentByNodeId(nodeId string) ([]Entity, error) {
-	response := []Entity{}
-	result := r.Query.SelectActiveByNodeId(FieldsAll, nodeId).Find(&response)
-	if result.Error != nil {
-		return []Entity{}, result.Error
+func (r *RepositoryImpl) FindCurrentByEhid(ehid string) (*Entity, error) {
+	response := Entity{
+		Ehid: ehid,
 	}
-	return response, nil
-}
-
-func (r *RepositoryImpl) FindCurrentByEhid(ehid string) ([]Entity, error) {
-	response := []Entity{}
-	result := r.Query.SelectActiveByEhid(FieldsAll, ehid).Find(&response)
+	result := r.Query.SelectActiveByEhid(FieldsAll, ehid).First(&response)
 	if result.Error != nil {
-		return []Entity{}, result.Error
+		return nil, result.Error
 	}
-	return response, nil
+	return &response, nil
 }
 
 func (r *RepositoryImpl) UpdateById(fields map[string]interface{}, id int) error {
