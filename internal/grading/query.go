@@ -103,12 +103,12 @@ func (q *QueryImpl) ByEhidAndIntersectingDates(ehid string, startDate string, en
 		Where(
 			q.Db.
 				Where("start_date <= ?", startDate).
-				Where("end_date >= ?", startDate),
-		).
-		Or(
-			q.Db.
-				Where("start_date <= ?", endDate).
-				Where("end_date >= ?", endDate),
+				Where("end_date >= ?", startDate).
+				Or(
+					q.Db.
+						Where("start_date <= ?", endDate).
+						Where("end_date >= ?", endDate),
+				),
 		)
 }
 

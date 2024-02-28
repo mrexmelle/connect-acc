@@ -22,3 +22,6 @@ app:
     authx:
       host: http://127.0.0.1
       port: 8080
+    org:
+      host: http://127.0.0.1
+      port: 8081

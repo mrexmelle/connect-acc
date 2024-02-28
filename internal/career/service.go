@@ -9,13 +9,16 @@ import (
 	"github.com/mrexmelle/connect-emp/internal/datesort"
 	"github.com/mrexmelle/connect-emp/internal/datestr"
 	"github.com/mrexmelle/connect-emp/internal/grading"
+	"github.com/mrexmelle/connect-emp/internal/localerror"
 	"github.com/mrexmelle/connect-emp/internal/titling"
+	"github.com/mrexmelle/connect-org/pkg/liborgc"
 )
 
 type Service struct {
 	ConfigService  *config.Service
 	GradingService *grading.Service
 	TitlingService *titling.Service
+	OrgClient      *liborgc.Client
 }
 
 func NewService(
@@ -27,6 +30,10 @@ func NewService(
 		ConfigService:  cfg,
 		GradingService: gs,
 		TitlingService: ts,
+		OrgClient: liborgc.NewClient(
+			cfg.ConfigRepository.GetOrgHost(),
+			cfg.ConfigRepository.GetOrgPort(),
+		),
 	}
 }
 
@@ -91,13 +98,18 @@ func (s *Service) RetrieveByEhidOrderByStartDateDesc(ehid string) ([]Aggregate, 
 	if err != nil {
 		return []Aggregate{}, err
 	}
+	membership, err := s.OrgClient.GetMembershipHistoryByEhidOrderByStartDateDesc(ehid)
+	if err != nil || membership.Error.Code != localerror.ErrSvcCodeNone {
+		return nil, err
+	}
 
-	return s.mergeGradingsAndTitlings(gradings, titlings)
+	return s.mergeHistories(gradings, titlings, *membership.Data)
 }
 
-func (s *Service) mergeGradingsAndTitlings(
+func (s *Service) mergeHistories(
 	gradings []grading.ViewEntity,
 	titlings []titling.ViewEntity,
+	memberships []liborgc.MembershipViewEntity,
 ) ([]Aggregate, error) {
 	aggs := []Aggregate{}
 
@@ -125,6 +137,18 @@ func (s *Service) mergeGradingsAndTitlings(
 
 		if t.StartDate < earliestStartDate {
 			earliestStartDate = t.StartDate
+		}
+	}
+
+	for _, m := range memberships {
+		idx := slices.Index(endDates, m.EndDate)
+
+		if idx == -1 {
+			endDates = append(endDates, m.EndDate)
+		}
+
+		if m.StartDate < earliestStartDate {
+			earliestStartDate = m.StartDate
 		}
 	}
 
@@ -168,6 +192,17 @@ func (s *Service) mergeGradingsAndTitlings(
 			}
 			if titleInterval.IsEncompassingInterval(aggsInterval) {
 				aggs[i].Title = t.Title
+				break
+			}
+		}
+
+		for _, m := range memberships {
+			titleInterval, err := dateinterval.NewFromStrings(m.StartDate, m.EndDate)
+			if err != nil {
+				return []Aggregate{}, err
+			}
+			if titleInterval.IsEncompassingInterval(aggsInterval) {
+				aggs[i].OrganizationNode = m.NodeId
 				break
 			}
 		}

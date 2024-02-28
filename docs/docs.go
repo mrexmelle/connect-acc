@@ -398,6 +398,9 @@ const docTemplate = `{
                 "grade": {
                     "type": "string"
                 },
+                "organization_node": {
+                    "type": "string"
+                },
                 "start_date": {
                     "type": "string"
                 },
@@ -413,6 +416,32 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_mrexmelle_connect-emp_internal_profile.Aggregate": {
+            "type": "object",
+            "properties": {
+                "dob": {
+                    "type": "string"
+                },
+                "ehid": {
+                    "type": "string"
+                },
+                "email_address": {
+                    "type": "string"
+                },
+                "employee_id": {
+                    "type": "string"
+                },
+                "grade": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "title": {
                     "type": "string"
                 }
             }
@@ -435,7 +464,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/github_com_mrexmelle_connect-emp_internal_career.Aggregate"
+                    "$ref": "#/definitions/github_com_mrexmelle_connect-emp_internal_profile.Aggregate"
                 },
                 "error": {
                     "$ref": "#/definitions/github_com_mrexmelle_connect-emp_internal_dto.ServiceError"

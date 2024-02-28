@@ -13,6 +13,8 @@ type Repository interface {
 	GetPort() int
 	GetAuthxHost() string
 	GetAuthxPort() int
+	GetOrgHost() string
+	GetOrgPort() int
 }
 
 type RepositoryImpl struct {
@@ -22,6 +24,8 @@ type RepositoryImpl struct {
 	Port      int
 	AuthxHost string
 	AuthxPort int
+	OrgHost   string
+	OrgPort   int
 }
 
 func NewRepository() Repository {
@@ -56,6 +60,8 @@ func NewRepository() Repository {
 
 	authxHost := viper.GetString("app.client.authx.host")
 	authxPort := viper.GetInt("app.client.authx.port")
+	orgHost := viper.GetString("app.client.org.host")
+	orgPort := viper.GetInt("app.client.org.port")
 
 	return &RepositoryImpl{
 		Profile:   profile,
@@ -64,6 +70,8 @@ func NewRepository() Repository {
 		Port:      port,
 		AuthxHost: authxHost,
 		AuthxPort: authxPort,
+		OrgHost:   orgHost,
+		OrgPort:   orgPort,
 	}
 }
 
@@ -89,4 +97,12 @@ func (r *RepositoryImpl) GetAuthxHost() string {
 
 func (r *RepositoryImpl) GetAuthxPort() int {
 	return r.AuthxPort
+}
+
+func (r *RepositoryImpl) GetOrgHost() string {
+	return r.OrgHost
+}
+
+func (r *RepositoryImpl) GetOrgPort() int {
+	return r.OrgPort
 }
