@@ -22,6 +22,9 @@ docker-push:
 docs:
 	swag init --parseDependency -g cmd/main.go
 
+install-deps:
+	GOPRIVATE=github.com/mrexmelle/connect-org go mod tidy
+
 test:
 	go test ./internal/...
 
