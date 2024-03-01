@@ -441,6 +441,9 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
+                "organization_node": {
+                    "type": "string"
+                },
                 "title": {
                     "type": "string"
                 }

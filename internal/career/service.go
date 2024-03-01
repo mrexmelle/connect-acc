@@ -48,6 +48,11 @@ func (s *Service) RetrieveCurrentByEhid(ehid string) (*Aggregate, error) {
 		return nil, err
 	}
 
+	m, err := s.OrgClient.GetMemberNodesByEhid(ehid)
+	if err != nil || len(*m.Data) == 0 {
+		return nil, err
+	}
+
 	gsd, err := datestr.NewFromString(g.StartDate)
 	if err != nil {
 		return nil, err
@@ -68,24 +73,25 @@ func (s *Service) RetrieveCurrentByEhid(ehid string) (*Aggregate, error) {
 		return nil, err
 	}
 
-	var sd = ""
-	if gsd.IsAfter(tsd) {
-		sd = gsd.AsString()
-	} else {
-		sd = tsd.AsString()
-	}
-	var ed = ""
-	if ged.IsBefore(ted) {
-		ed = ged.AsString()
-	} else {
-		ed = ted.AsString()
+	msd, err := datestr.NewFromString((*m.Data)[0].StartDate)
+	if err != nil {
+		return nil, err
 	}
 
+	med, err := datestr.NewFromString((*m.Data)[0].EndDate)
+	if err != nil {
+		return nil, err
+	}
+
+	sd := s.maxDate([]datestr.Class{*gsd, *tsd, *msd})
+	ed := s.minDate([]datestr.Class{*ged, *ted, *med})
+
 	return &Aggregate{
-		StartDate: sd,
-		EndDate:   ed,
-		Grade:     g.Grade,
-		Title:     t.Title,
+		StartDate:        (*sd).AsString(),
+		EndDate:          (*ed).AsString(),
+		Grade:            g.Grade,
+		Title:            t.Title,
+		OrganizationNode: (*m.Data)[0].NodeId,
 	}, nil
 }
 
@@ -98,7 +104,7 @@ func (s *Service) RetrieveByEhidOrderByStartDateDesc(ehid string) ([]Aggregate, 
 	if err != nil {
 		return []Aggregate{}, err
 	}
-	membership, err := s.OrgClient.GetMembershipHistoryByEhidOrderByStartDateDesc(ehid)
+	membership, err := s.OrgClient.GetMemberHistoryByEhidOrderByStartDateDesc(ehid)
 	if err != nil || membership.Error.Code != localerror.ErrSvcCodeNone {
 		return nil, err
 	}
@@ -115,27 +121,24 @@ func (s *Service) mergeHistories(
 
 	endDates := []string{}
 	earliestStartDate := ""
-	for i, g := range gradings {
+	for _, g := range gradings {
 		idx := slices.Index(endDates, g.EndDate)
 		if idx == -1 {
 			endDates = append(endDates, g.EndDate)
 		}
 
-		if i == 0 {
+		if earliestStartDate == "" || g.StartDate < earliestStartDate {
 			earliestStartDate = g.StartDate
-		} else {
-			if g.StartDate < earliestStartDate {
-				earliestStartDate = g.StartDate
-			}
 		}
 	}
+
 	for _, t := range titlings {
 		idx := slices.Index(endDates, t.EndDate)
 		if idx == -1 {
 			endDates = append(endDates, t.EndDate)
 		}
 
-		if t.StartDate < earliestStartDate {
+		if earliestStartDate == "" || t.StartDate < earliestStartDate {
 			earliestStartDate = t.StartDate
 		}
 	}
@@ -147,7 +150,7 @@ func (s *Service) mergeHistories(
 			endDates = append(endDates, m.EndDate)
 		}
 
-		if m.StartDate < earliestStartDate {
+		if earliestStartDate == "" || m.StartDate < earliestStartDate {
 			earliestStartDate = m.StartDate
 		}
 	}
@@ -197,11 +200,11 @@ func (s *Service) mergeHistories(
 		}
 
 		for _, m := range memberships {
-			titleInterval, err := dateinterval.NewFromStrings(m.StartDate, m.EndDate)
+			membershipInterval, err := dateinterval.NewFromStrings(m.StartDate, m.EndDate)
 			if err != nil {
 				return []Aggregate{}, err
 			}
-			if titleInterval.IsEncompassingInterval(aggsInterval) {
+			if membershipInterval.IsEncompassingInterval(aggsInterval) {
 				aggs[i].OrganizationNode = m.NodeId
 				break
 			}
@@ -209,4 +212,34 @@ func (s *Service) mergeHistories(
 	}
 
 	return aggs, nil
+}
+
+func (s *Service) maxDate(dates []datestr.Class) *datestr.Class {
+	if len(dates) == 0 {
+		return nil
+	}
+
+	maxPtr := &dates[0]
+	for i := 1; i < len(dates); i++ {
+		if dates[i].IsAfterOrEquals(maxPtr) {
+			maxPtr = &dates[i]
+		}
+	}
+
+	return maxPtr
+}
+
+func (s *Service) minDate(dates []datestr.Class) *datestr.Class {
+	if len(dates) == 0 {
+		return nil
+	}
+
+	minPtr := &dates[0]
+	for i := 1; i < len(dates); i++ {
+		if dates[i].IsBeforeOrEquals(minPtr) {
+			minPtr = &dates[i]
+		}
+	}
+
+	return minPtr
 }

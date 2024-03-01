@@ -81,8 +81,8 @@ github.com/mitchellh/mapstructure v1.5.0 h1:jeMsZIYE/09sWLaz43PL7Gy6RuMjD2eJVyua
 github.com/mitchellh/mapstructure v1.5.0/go.mod h1:bFUtVrKA4DC2yAKiSyO/QUcy7e+RRV2QTWOzhPopBRo=
 github.com/mrexmelle/connect-authx v0.0.0-20240219140757-5bec41d41911 h1:PUyA/tXAkTUwi+zO35+9aZSxo34ZKeUDs7tQvzvmUBo=
 github.com/mrexmelle/connect-authx v0.0.0-20240219140757-5bec41d41911/go.mod h1:QTykmylqOjzSurRip2hQgK8E7DSNNVkqVUPnEo6cvrk=
-github.com/mrexmelle/connect-org v0.0.0-20240228163821-ff070aedfe7f h1:ucay55oKlSazR4DpsXQzx5S+kj5iYzpe+S2qUVKDzNo=
-github.com/mrexmelle/connect-org v0.0.0-20240228163821-ff070aedfe7f/go.mod h1:i+vGc7C2lP/5twN7lsDK+B6OL59GEDzXjRfokoiaxc0=
+github.com/mrexmelle/connect-org v0.0.0-20240301061103-20be88534e15 h1:Xui5IOxXEY/ozbXe/HMg0kg9nxlq3wJzXxVhSnScot0=
+github.com/mrexmelle/connect-org v0.0.0-20240301061103-20be88534e15/go.mod h1:i+vGc7C2lP/5twN7lsDK+B6OL59GEDzXjRfokoiaxc0=
 github.com/pelletier/go-toml/v2 v2.1.0 h1:FnwAJ4oYMvbT/34k9zzHuZNrhlz48GB3/s6at6/MHO4=
 github.com/pelletier/go-toml/v2 v2.1.0/go.mod h1:tJU2Z3ZkXwnxa4DPO899bsyIoywizdUvyaeZurnPPDc=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
