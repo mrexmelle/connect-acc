@@ -1,6 +1,6 @@
 version: '3.8'
 services:
-  core:
+  emp:
     container_name: connect-emp-core
     image: ghcr.io/mrexmelle/connect-emp:0.1.0
     environment:
