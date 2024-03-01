@@ -52,6 +52,7 @@ func (s *Service) RetrieveProfile(ehid string) (*profile.Aggregate, error) {
 	}
 	agg.Grade = career.Grade
 	agg.Title = career.Title
+	agg.OrganizationNode = career.OrganizationNode
 
 	return agg, nil
 }
